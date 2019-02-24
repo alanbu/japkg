@@ -1,0 +1,10 @@
+japkg can be build using the GNU make, GCC4.9.4 ( and possibly later).
+
+The Makefile is currently set up for use with the RISC OS GCCSDK cross compiler on
+a linux system.
+To build use ro-make.
+
+It should be adaptable to build natively under RISC OS with the above tools.
+The include/library paths will need to be changed at least.
+
+The libraries required are tbx and ziparch (ZipArchive).

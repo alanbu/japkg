@@ -1,0 +1,31 @@
+The original files in this app are under the GPL version 3. The files listed
+below have been copied from other applications, the licences are listed below.
+
+Log.h, Log.cc, RISCOSZipExtra.h, RISCOSZipExtra.cc, Package.h, Packager.cc
+are taken from PackIt by Alan Buckley are under the GPL version 3.
+
+version.h, version.cc are from LibPkg by Graham Shaw are under the GNU Lesser GPL.
+
+The GNU Licences are in:
+
+Copyright-GPL3 for the GPL Version 3
+Copyright-LGPL2.1 for the Lesser GPL version 2.1
+
+and can be seen online at:
+
+See http://www.gnu.org/licenses.
+
+
+The latest version of this source can be found on github at:
+
+https://github.com/alanbu/japkg
+
+The source code for PackIt is on github at:
+
+https://github.com/alanbu/packit
+
+The source code for LibPkg is on github at:
+
+https://github.com/alanbu/libpkg
+
+

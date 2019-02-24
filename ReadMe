@@ -1,0 +1,29 @@
+japkg is a command line utility to read a CSV list of packages and use the
+information in it to produce RISC OS packages for RISC OS applications.
+
+In it's current state it is hard coded for a particular use in automatically creating/updating
+packages for the JASPP (The Archimedes Software Preservation Project).
+
+The source is now provided in GitHub and can be used as an example of how multiple packages can be
+created and managed.
+
+Briefly, the catalogue/csv file it reads contains a list of column headings that are parsed
+and used for identifying the fields in the following lines of the file.
+These fields are used to set the various field for the package.
+
+An additional folder called "Extras" contains special packages that also should be packaged,
+but are not part of the CSV file.
+The subfolders of Extras include the files to ship and Control and copyright files for the
+package.
+
+There is also a check to see if any of the files in a package have changed from the last package
+created by japkg was and a new version of the package is created if they have.
+
+This program just creates the packages. To turn this into a full package website an
+index of the packages must be created. A program called pkgindex, available as part
+of the RISC OS GCCSDK autobuilder, can be used for this additional step. 
+
+
+
+
+

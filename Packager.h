@@ -101,7 +101,8 @@ public:
 enum ComponentFlags
 {
 	CF_None,
-	CF_Movable
+	CF_Movable,
+	CF_Run
 	// Implement others as needed
 };
 
@@ -129,6 +130,10 @@ public:
 
 	}
 
+	void set_source_dir(const std::string &source_dir)
+	{
+		_source = source_dir + "." + leaf_name();
+	}
 	const std::string &source() const {return _source;}
 	const std::string &install_to() const {return _install_to;}
 	void install_to(const std::string &new_path) {_install_to = new_path;}
@@ -138,10 +143,15 @@ public:
 	 */
 	std::string component() const
 	{
-		std::string::size_type leaf_pos = _source.rfind('.');
-		std::string leaf_name = (leaf_pos == std::string::npos) ? _source : _source.substr(leaf_pos+1);
-        return _install_to + "." + leaf_name;
+        return _install_to + "." + leaf_name();
 	}
+
+	std::string leaf_name() const
+	{
+		std::string::size_type leaf_pos = _source.rfind('.');
+		return (leaf_pos == std::string::npos) ? _source : _source.substr(leaf_pos+1);
+	}
+
 };
 
 /**
@@ -214,6 +224,7 @@ public:
        std::string standards_version() const  {return _standards_version;}
 
        const std::vector<ItemToPackage> &items_to_package() const {return _items_to_package;};
+       std::vector<ItemToPackage> &items_to_package() {return _items_to_package;};
        void set_item_to_package(const ItemToPackage &item);
        void remove_item_to_package(const std::string &source);
 
@@ -236,6 +247,8 @@ public:
        void suggests(std::string value);
        std::string conflicts() const {return _conflicts;}
        void conflicts(std::string value);
+
+       void components(std::string value);
 
        bool files_in_zip(std::string &zipfile, std::string &zipitem) const;
 

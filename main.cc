@@ -220,7 +220,15 @@ void package_extra(const std::string &extra_dir)
 		std::cout << err << std::endl;
 		log_context.error(err);
 		return;
+	} catch(PackageFormatException &pferr)
+	{
+		std::string err("Error reading Control file ");
+		err += pferr.message();
+		std::cout << err << std::endl;
+		log_context.error(err);
+		return;
 	}
+
 
 
 	pkg.copyright(copyright);
@@ -243,6 +251,9 @@ void package_extra(const std::string &extra_dir)
 	if (pkg.maintainer().empty()) pkg.maintainer(s_maintainer);
 	if (pkg.licence().empty()) pkg.licence("Non free");
 
+	std::string install_to(s_base_install);
+	bool comps_set = !pkg.items_to_package().empty();
+
 	tbx::Path extra_path(extra_dir);
 	std::vector<std::string> special_dir_list;
 	for (std::string &fsobject : extra_path)
@@ -255,7 +266,22 @@ void package_extra(const std::string &extra_dir)
 			special_dir_list.push_back(fsobject);
 		} else
 		{
-			pkg.set_item_to_package(ItemToPackage(extra_dir + "." + fsobject, s_base_install, CF_Movable));
+			bool new_comp = true;
+			if (comps_set)
+			{
+				for (ItemToPackage &ip : pkg.items_to_package())
+				{
+					if (ip.source() == fsobject)
+					{
+						ip.set_source_dir(extra_dir);
+						new_comp = false;
+					}
+				}
+			}
+			if (new_comp)
+			{
+				pkg.set_item_to_package(ItemToPackage(extra_dir + "." + fsobject, install_to, CF_Movable));
+			}
 		}
 	}
 	for (std::string &spec_dir : special_dir_list)

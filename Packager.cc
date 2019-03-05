@@ -473,6 +473,52 @@ void Packager::conflicts(std::string value)
    modified(true);
 }
 
+void Packager::components(std::string value)
+{
+	if (value.empty()) return;
+	std::string comp, flag;
+	unsigned int flags = 0;
+	std::string::const_iterator citer = value.begin();
+
+	while (citer != value.end())
+	{
+		comp.clear();
+		flags = 0;
+
+		while (citer != value.end() && *citer != ' ') comp += *citer++;
+		while (citer != value.end() && *citer == ' ') citer++;
+		if (citer != value.end() && *citer == '(')
+		{
+			citer++;
+			while (citer != value.end() && *citer != ')')
+			{
+				flag.clear();
+				while (citer != value.end() && *citer != ' ' && *citer != ')')
+				{
+					flag += *citer++;
+				}
+				if (flag == "Movable") flags |= CF_Movable;
+				else if (flag == "Run") flags |= CF_Run;
+				else throw PackageFormatException("Invalid component flag " + flag);
+				if (citer == value.end())
+				{
+					throw PackageFormatException("Missing ')' from component flags");
+				}
+				++citer;
+				while (citer != value.end() && *citer == ' ') citer++;
+			}
+		}
+		std::string::size_type pos = comp.rfind('.');
+		if (pos == std::string::npos) throw PackageFormatException("Invalid component name " + comp);
+		std::string install_to = comp.substr(0,pos);
+		std::string leaf = comp.substr(pos+1);
+		set_item_to_package(ItemToPackage(leaf, install_to, flags));
+		while (citer != value.end() && *citer == ' ') citer++;
+		if (citer != value.end() && *citer == ',') citer++;
+		while (citer != value.end() && *citer == ' ') citer++;
+	}
+}
+
 /**
  * Check dependency format
  */
@@ -755,6 +801,9 @@ void Packager::set_control_field(std::string name, std::string value)
 	} else if (name.compare("Conflicts") == 0)
 	{
 	   conflicts(value);
+	} else if (name.compare("Components") == 0)
+	{
+		components(value);
 	} else
 	{
 		throw PackageFormatException("Unable to process field '" + name + "' in RiscPkg/Control");
@@ -1021,7 +1070,9 @@ std::string Packager::control_as_text() const
 				os << ",";
 			}
 
-			os << item_to_package.component() << " (Movable)";
+			os << item_to_package.component() << " (Movable";
+			if (item_to_package.component_flags() & CF_Run) os << " Run";
+			os << ")";
 		}
 	}
 	if (!write_comps) os << std::endl;
